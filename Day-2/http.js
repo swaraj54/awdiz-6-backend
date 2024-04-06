@@ -16,3 +16,8 @@ const server = http.createServer((req, res) => {
 server.listen(3001, () => {
   console.log("Server listening on port 3001;");
 });
+
+// get health check api
+
+// get('/ping' , pong)
+// get ('/', running backend server)
