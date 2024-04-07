@@ -1,0 +1,21 @@
+1.
+npm init -y 
+its create package.json file
+
+2.
+create index.js file 
+
+3. 
+npm i express
+install express
+
+4. 
+inside index.js file create express setup 
+
+5. 
+npm i nodemon
+install nodemon to restart server 
+
+6. 
+create script inside package.json and use nodemon 
+
