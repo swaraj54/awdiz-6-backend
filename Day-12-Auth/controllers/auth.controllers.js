@@ -1,9 +1,10 @@
 import UserSchema from "../models/user.schema.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export const Register = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword } = req.body;
+    const { name, email, password, confirmPassword } = req.body.userData;
     if (!name || !email || !password || !confirmPassword) {
       return res.json({ success: false, message: "All fields are required." });
     }
@@ -50,7 +51,7 @@ export const Register = async (req, res) => {
 
 export const Login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body.userData;
     if (!email || !password) {
       return res.json({ success: false, message: "All fields are required." });
     }
@@ -65,11 +66,34 @@ export const Login = async (req, res) => {
 
     // console.log(user, "user");
 
-    // compare user password with stored password in db
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
-    res.send("Login");
+    if (!isPasswordCorrect) {
+      return res.json({
+        success: false,
+        message: "Password is wrong.",
+      });
+    }
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    console.log(token, "token");
+    // token -> cookie -> localStorage, cookies
+    // userData  -> context -> context, redux
+    // compare user password with stored password in db
+    res.cookie("token", token);
+    return res.json({
+      success: true,
+      message: "Login Successfull.",
+      userData: user,
+    });
   } catch (error) {
     console.log(error, "error");
     return res.json({ error, success: false });
   }
 };
+
+
+// 1. create controller for validate-token 
+// 2. access token from cookie 
+// 3. decrypt token by using jwt, id
+// 4. use id to find user from mongodb findById
+// 5.response , userDate, 
