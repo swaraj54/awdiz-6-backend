@@ -91,9 +91,42 @@ export const Login = async (req, res) => {
   }
 };
 
-
-// 1. create controller for validate-token 
-// 2. access token from cookie 
+// 1. create controller for validate-token
+// 2. access token from cookie
 // 3. decrypt token by using jwt, id
 // 4. use id to find user from mongodb findById
-// 5.response , userDate, 
+// 5.response , userDate,
+export const validateToken = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.json({
+        success: false,
+        message: "Token not found.",
+      });
+    }
+    const decodedData = await jwt.verify(token, process.env.JWT_SECRET);
+    // console.log(decodedData);
+    if (!decodedData.id) {
+      return res.json({
+        success: false,
+        message: "Token is expired.",
+      });
+    }
+
+    const user = await UserSchema.findById(decodedData.id);
+
+    // console.log(user);
+    if (!user) {
+      return res.json({
+        success: false,
+        message: "Token is not valid.",
+      });
+    }
+
+    return res.json({ user, success: true });
+  } catch (error) {
+    console.log(error, "error");
+    return res.json({ error, success: false });
+  }
+};
