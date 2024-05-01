@@ -130,3 +130,5 @@ export const validateToken = async (req, res) => {
     return res.json({ error, success: false });
   }
 };
+
+
