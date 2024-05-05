@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import dotnev from "dotenv";
 import PorductSchema from "./schemas/product.schema.js";
+import UserSchema from "./schemas/user.schema.js";
+import bcrypt from "bcrypt";
 
 const app = express();
 dotnev.config();
@@ -11,12 +13,10 @@ app.get("/", (req, res) => {
   res.send("Working..");
 });
 
-
-
 app.post("/add-product", async (req, res) => {
   try {
-    const { name, category, price, quantity, tags } = req.body;
-    if (!name || !category || !price || !quantity || !tags) {
+    const { name, category, price, quantity, tags, userId } = req.body;
+    if (!name || !category || !price || !quantity || !tags || !userId) {
       return res.json({ success: false, error: "All fields are required." });
     }
     const newProduct = new PorductSchema({
@@ -25,6 +25,7 @@ app.post("/add-product", async (req, res) => {
       price: price,
       quantity: quantity,
       tags: tags,
+      user: userId,
     });
     await newProduct.save();
     return res.json({ success: true, message: "Product successfully stored." });
@@ -68,6 +69,66 @@ app.post("/unwind-projecting", async (req, res) => {
     res.send(true);
   } catch (error) {
     return res.json({ success: false, error });
+  }
+});
+
+app.post("/get-products-by-user", async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const products = await PorductSchema.find({ user: userId }).populate(
+      "user"
+    );
+    res.send(products);
+  } catch (error) {
+    console.log(error);
+    return res.json({ success: false, error });
+  }
+});
+
+app.post("/register", async (req, res) => {
+  try {
+    const { name, email, password, confirmPassword } = req.body;
+    if (!name || !email || !password || !confirmPassword) {
+      return res.json({ success: false, message: "All fields are required." });
+    }
+    if (password !== confirmPassword) {
+      return res.json({
+        success: false,
+        message: "Password and Confirm is not matched.",
+      });
+    }
+
+    const isEmailExists = await UserSchema.findOne({ email: email });
+    // console.log(isEmailExists, "isEmailExists");
+    if (isEmailExists) {
+      return res.json({
+        success: false,
+        message: "Email is alreadly exist, Please use another one.",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 1st type to store data in mongodb
+    // const newUser = await UserSchema.create({
+    //   name: name,
+    //   email: email,
+    //   password: hashedPassword,
+    // });
+
+    // 2nd type to store data in mongodb
+    const newUser = new UserSchema({
+      name: name,
+      email: email,
+      password: hashedPassword,
+    });
+
+    await newUser.save();
+
+    return res.json({ success: true, message: "Registeration Completed." });
+  } catch (error) {
+    console.log(error, "error");
+    return res.json({ error, success: false });
   }
 });
 
