@@ -4,8 +4,14 @@ import dotnev from "dotenv";
 import PorductSchema from "./schemas/product.schema.js";
 import UserSchema from "./schemas/user.schema.js";
 import bcrypt from "bcrypt";
+import cors from "cors";
 
 const app = express();
+var corsOptions = {
+  origin: ["http://localhost:3000", "https://myntra.com"],
+  credentials: true,
+};
+app.use(cors(corsOptions));
 dotnev.config();
 app.use(express.json());
 
@@ -15,7 +21,8 @@ app.get("/", (req, res) => {
 
 app.post("/add-product", async (req, res) => {
   try {
-    const { name, category, price, quantity, tags, userId } = req.body;
+    const { name, category, price, quantity, tags } = req.body.productData;
+    const { userId } = req.body;
     if (!name || !category || !price || !quantity || !tags || !userId) {
       return res.json({ success: false, error: "All fields are required." });
     }
