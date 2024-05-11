@@ -1,0 +1,30 @@
+Ecommerse Project 
+
+-Roles
+Buyer
+Seller
+
+-Auth
+Register - are you a seller or buyer ? Pending - completed
+Login
+Context - user data, user role  Pending- completed
+Cookie - jwt token
+Validate-user
+Axios
+Routing 
+Wrapper Component for auth, role pending
+
+
+-Product
+Seller - 
+Add product - seller 
+Get seller products
+
+Buyer - 
+Get all products
+Buy a product - cart, wishlist - Pending 
+
+
+
+
+
