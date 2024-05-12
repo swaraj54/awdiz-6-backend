@@ -1,3 +1,5 @@
+import PorductSchema from "../schemas/product.schema.js";
+
 export const addProduct = async (req, res) => {
   try {
     const { name, category, price, quantity, tags } = req.body.productData;
@@ -47,10 +49,11 @@ export const getProductsByCategoryPrice = async (req, res) => {
 export const getProductsBySeller = async (req, res) => {
   try {
     const { userId } = req.body;
+    console.log(userId,"userId")
     const products = await PorductSchema.find({ user: userId }).populate(
       "user"
     );
-    res.send(products);
+    res.json({ success: true, products });
   } catch (error) {
     console.log(error);
     return res.json({ success: false, error });
