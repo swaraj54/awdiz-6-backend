@@ -49,4 +49,10 @@ res.json({success, messahge : ""})
 
 
 
+For Placement :-
+
+Task 1 . Implement all functionalities in adidas.
+Task 2 . Nextjs project todo, 
+Task 3 . Nextjs authentication -> link in group
+
 
