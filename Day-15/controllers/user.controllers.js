@@ -76,7 +76,12 @@ export const login = async (req, res) => {
     return res.json({
       success: true,
       message: "Login Successfull.",
-      userData: { name: user.name, email: user.email, role: user.role },
+      userData: {
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        _id: user._id,
+      },
     });
   } catch (error) {
     console.log(error, "error");
@@ -123,6 +128,31 @@ export const Logout = async (req, res) => {
   try {
     res.cookie("token", "");
     return res.json({ success: true, message: "Logout Sucessfull." });
+  } catch (error) {
+    console.log(error, "error");
+    return res.json({ error, success: false });
+  }
+};
+
+export const addToCart = async (req, res) => {
+  try {
+    const { userId, productId } = req.body;
+    console.log(userId, productId);
+    const user = await UserSchema.findByIdAndUpdate(
+      userId,
+      {
+        $addToSet: { cart: productId },
+      },
+      { new: true }
+    );
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+    console.log(user, "user");
+    return res.json({
+      success: true,
+      message: "Product successfully added to cart.",
+    });
   } catch (error) {
     console.log(error, "error");
     return res.json({ error, success: false });

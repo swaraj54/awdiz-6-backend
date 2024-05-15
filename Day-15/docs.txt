@@ -5,14 +5,14 @@ Buyer
 Seller
 
 -Auth
-Register - are you a seller or buyer ? Pending - completed
+Register - are you a seller or buyer ? 
 Login
-Context - user data, user role  Pending- completed
+Context - user data, user role  
 Cookie - jwt token
 Validate-user
 Axios
 Routing 
-Wrapper Component for auth, role pending
+Wrapper Component for auth, role 
 
 
 -Product
@@ -22,7 +22,29 @@ Get seller products
 
 Buyer - 
 Get all products
-Buy a product - cart, wishlist - Pending 
+Buy a product - cart, wishlist 
+1.
+Show cart -> display products - assignment
+
+userId 
+user = UserSchema.findById(ui)
+var products = []
+user.cart.map((pi)=> {
+    const singleProduct = await ProducctSchemma.findById(pi)
+    products.push(singleProduct)
+})
+
+return res.json({products:products, success })
+
+2.
+erase cart -> final buy - assignment
+
+userId 
+user = UserSchema.findById(ui)
+user.cart = [];
+user.save();
+
+res.json({success, messahge : ""})
 
 
 
